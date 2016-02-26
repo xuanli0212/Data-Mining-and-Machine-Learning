@@ -1,7 +1,33 @@
+#######  
+#  I.	Dataset: 
+#   YaleB
+#  Outcome: 1-38
+#  2414 obs and 1024 dimension
+
+#  II.	Method:
+#   (1)	 Data Processing
+#   Center and L2 Normalize data by deducting mean and divided by square root of variances for each column
+
+#   (2)	 Training/Testing
+#   Permute the whole dataset and split the whole datasets into 80% training and 20% testing datasets.
+
+#   (3)	Model Training—Using Training Datasets
+#   a)	Classifier: Both linear SVM and non-linear SVM with Gaussian Radial Basis Function  Kernel
+#   b)	Model Parameters:  Cost and Gamma 
+#   According to previous papers, we set a list of cost and gamma values (cost from 2^-2 to 2^5, gamma from 2^-9 to 2^1)
+#   We use 5-fold CV to select the best cost and gamma value by measuring the accuracy.
+#   Final Model: Linear SVM with Cost =2^4
+
+#  (4)	Model Evaluation—Using training and testing Datasets
+#   a)	Using training datasets to run best SVM model and predict on test dataset
+# b)	Measure test dataset accuracy
+#########
+
+
 library("e1701")
 library("caret")
 
-
+## Data Processing- We centralized and scaled the datasets
 x<-scale(YaleB_X,center=T,scale=T);
 dataset<-data.frame(y=YaleB_Y,x=x);
 colnames(dataset)[1]='y'
@@ -9,8 +35,12 @@ dataset$y <- factor(dataset$y)
 
 n.obs <- nrow(dataset); # no. of observations 
 s = sample(n.obs);
+
+## We split the dataset into traning and testing dataset
 train=dataset[s[1:1800],]
 test=dataset[s[1801:2414],];
+
+## set parameters 
 C=c(2^-2,2^-1,2^0,2^1,2^2,2^3,2^5,2^6)
 gamma=c(2^-10,2^-9,2^-8,2^-7,2^-6,2^-5,2^-4,2^-3,2^-2,2^-1,2^0,2^1,2^2,2^3)
 
